@@ -1,0 +1,110 @@
+{% extends "contacts/base.html" %}
+{% block title %}Contacts{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <form class="row" method="get" action=".">
+    <input name="q" value="{{ query }}" placeholder="Search: name, phone, email, city..." style="flex:1; min-width: 260px;">
+
+    <!-- keep current sort when searching -->
+    <input type="hidden" name="sort" value="{{ sort }}">
+
+    <button type="submit">Search</button>
+
+    <!-- Sorting buttons -->
+    {% if sort == "last_name" %}
+      <a href="?q={{ query }}&sort=-last_name">Sortuj: Nazwisko ↓</a>
+    {% elif sort == "-last_name" %}
+     <a href="?q={{ query }}&sort=last_name">Sortuj: Nazwisko ↑</a>
+    {% else %}
+     <a href="?q={{ query }}&sort=last_name">Sortuj: Nazwisko</a>
+    {% endif %}
+
+    {% if sort == "created_at" %}
+      <a href="?q={{ query }}&sort=-created_at">Sortuj: Data ↓</a>
+    {% elif sort == "-created_at" %}
+      <a href="?q={{ query }}&sort=created_at">Sortuj: Data ↑</a>
+    {% else %}
+      <a href="?q={{ query }}&sort=-created_at">Sortuj: Data</a>
+    {% endif %}
+
+    <a href="{% url 'contacts:list' %}">Reset</a>
+  </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>City</th>
+          <th>Weather</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      
+      <tbody id="contacts-table">
+        {% for c in contacts %}
+        <tr data-id="{{ c.id }}">
+          <td>{{ c.first_name }} {{ c.last_name }}</td>
+          <td>{{ c.phone_number }}</td>
+          <td class="email-cell">{{ c.email }}</td>
+          <td>{{ c.city }}</td>
+          <td>
+          {% if c.weather.temperature is not None %}
+            <div class="flex flex-col">
+              <span class="text-blue-400 font-bold">{{ c.weather.temperature }}°C</span>
+              <br><span class="text-xs text-gray-500">{{ c.weather.wind_speed }} km/h</span>
+            </div>
+          {% else %}
+            <span class="text-gray-600">—</span>
+          {% endif %}
+        </td>
+
+          <td><span class="badge">
+            {{ c.status.name }}
+          </span></td>          
+          <td class="small">
+            {{ c.created_at|date:"Y-m-d H:i" }}</td>
+          <td class="row actions">
+            <a href="{% url 'contacts:edit' c.id %}">Edit</a>
+            <button type="button" class="js-delete">Delete (API)</button>
+            <a href="{% url 'contacts:delete' c.id %}">Delete (form)</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="small">No contacts.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Simple delete via API (demonstrates API + JS)
+  function getCsrfToken() {
+    // For DELETE, Django doesn't require CSRF by default only for unsafe methods in some setups.
+    // We'll keep it simple; if needed, implement CSRF header properly.
+    return null;
+  }
+
+  document.addEventListener("click", async (e) => {
+    if (!e.target.classList.contains("js-delete")) return;
+
+    const row = e.target.closest("tr");
+    const id = row.dataset.id;
+
+    if (!confirm("Delete this contact?")) return;
+
+    const response = await fetch(`/api/contacts/${id}/`, { method: "DELETE" });
+    if (response.ok) {
+      row.remove();
+    } else {
+      alert("Delete failed");
+    }
+  });
+</script>
+{% endblock %}

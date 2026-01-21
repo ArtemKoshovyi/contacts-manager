@@ -1,0 +1,16 @@
+{% extends "contacts/base.html" %}
+{% block title %}Import CSV{% endblock %}
+
+{% block content %}
+  <div class="card">
+    <h3 style="margin-top:0;">Import contacts from CSV</h3>
+    <p class="small">Headers: first_name,last_name,phone_number,email,city,status</p>
+
+    <form method="post" enctype="multipart/form-data" class="row">
+      {% csrf_token %}
+      {{ form.csv_file }}
+      <button type="submit">Import</button>
+      <a href="{% url 'contacts:list' %}">Back</a>
+    </form>
+  </div>
+{% endblock %}

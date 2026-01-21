@@ -1,0 +1,43 @@
+{% extends "contacts/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+  <div class="card">
+      <h3 style="margin-top: 0;">{{ title }}</h3>
+      <form method="post" class="contact-form">
+          {% csrf_token %}
+          <div class="form-fields">
+              {{ form.as_p }}
+          </div>
+          <div class="row" style="margin-top: 20px;">
+              <button type="submit">Save</button>
+              <a href="{% url 'contacts:list' %}">Cancel</a>
+          </div>
+      </form>
+  </div>
+    
+  <script>
+  const form = document.querySelector("form");
+  if (form) {
+    form.addEventListener("submit", function (e) {
+      const phoneInput = document.querySelector('input[name="phone_number"]');
+      if (!phoneInput) return;
+
+      const phone = phoneInput.value.trim();
+
+      if (phone.length < 9) {
+        alert("Numer telefonu jest za krótki");
+        e.preventDefault();
+        return;
+      }
+
+      if (!/^\+?\d+$/.test(phone)) {
+        alert("Niepoprawny format numeru telefonu");
+        e.preventDefault();
+      }
+    });
+  }
+  </script>
+
+{% endblock %}

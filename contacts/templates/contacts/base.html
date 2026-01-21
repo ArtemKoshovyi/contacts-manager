@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>
+    {% block title %}Contacts{% endblock %}
+  </title>
+  <link rel="stylesheet" href="{% static 'contacts/style.css' %}">
+</head>
+<body>
+  
+  <div class="container">
+    <div class="card">
+      <button id="theme-toggle">🌓</button>
+
+      <div class="row">
+        <div>
+            <strong>Contacts</strong> 
+            <span class="small">Django demo</span>
+        </div>
+        <div class="row">
+          <a href="{% url 'contacts:add' %}">Add</a>
+          <a href="{% url 'contacts:import' %}">Import CSV</a>
+          <a href="{% url 'contacts:export' %}">Export CSV</a>
+        </div>
+      </div>
+    </div>
+
+    {% block content %}{% endblock %}
+  </div>
+
+<script>
+  const root = document.documentElement;
+  root.classList.toggle("light", localStorage.theme === "light");
+
+  document.getElementById("theme-toggle").onclick = () => {
+    root.classList.toggle("light");
+    localStorage.theme = root.classList.contains("light") ? "light" : "dark";
+  };
+</script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

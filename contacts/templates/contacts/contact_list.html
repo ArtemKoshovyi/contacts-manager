@@ -84,10 +84,8 @@
 
 {% block scripts %}
 <script>
-  // Simple delete via API (demonstrates API + JS)
   function getCsrfToken() {
-    // For DELETE, Django doesn't require CSRF by default only for unsafe methods in some setups.
-    // We'll keep it simple; if needed, implement CSRF header properly.
+
     return null;
   }
 

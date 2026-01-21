@@ -65,7 +65,7 @@ def contact_list(request: HttpRequest) -> HttpResponse:
 
     contacts = contacts.order_by(sort)
 
-    # Погода с простым кэшем на время одного запроса (чтобы не запрашивать один город дважды)
+  
     weather_cache = {}
     for contact in contacts:
         city = contact.city
@@ -152,10 +152,7 @@ def contact_export_csv(request: HttpRequest) -> HttpResponse:
 
     return response
 
-# --- REST API ENDPOINTS (DRF) ---
 
-# GET /api/contacts/ - Список
-# POST /api/contacts/ - Создание
 class ContactListCreateAPI(generics.ListCreateAPIView):
     authentication_classes = [CsrfExemptSessionAuthentication]
     permission_classes = [AllowAny]

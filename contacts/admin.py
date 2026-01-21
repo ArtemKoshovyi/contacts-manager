@@ -1,5 +1,4 @@
 from django.contrib import admin
-# ИСПРАВЛЕНО: убрана 's' в конце
 from .models import Contact, ContactStatusChoice
 
 @admin.register(ContactStatusChoice)
